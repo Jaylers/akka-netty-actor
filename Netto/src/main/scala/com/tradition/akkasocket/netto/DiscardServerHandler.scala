@@ -1,14 +1,7 @@
 package com.tradition.akkasocket.netto
 
 import org.jboss.netty.buffer.ChannelBuffer
-import org.jboss.netty.channel.{
-  ChannelEvent,
-  ChannelHandlerContext,
-  ChannelStateEvent,
-  ExceptionEvent,
-  MessageEvent,
-  SimpleChannelUpstreamHandler
-}
+import org.jboss.netty.channel._
 import java.util.logging.Logger
 
 class DiscardServerHandler extends SimpleChannelUpstreamHandler {
@@ -21,8 +14,16 @@ class DiscardServerHandler extends SimpleChannelUpstreamHandler {
 
   override def handleUpstream(ctx: ChannelHandlerContext, e: ChannelEvent) {
     e match {
-      case c: ChannelStateEvent => logger.info(e.toString)
-      case _                    => None
+      case event: ChannelStateEvent=> {
+        event.getState match {
+          case ChannelState.OPEN => println("ChannelState is now open")
+          case ChannelState.BOUND => println("ChannelState is now bound")
+          case ChannelState.CONNECTED => {
+            //Build Actor and send back
+          }
+        }
+      }
+      case _                    => println("get none")
     }
     super.handleUpstream(ctx, e)
   }
