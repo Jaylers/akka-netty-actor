@@ -19,7 +19,7 @@ object ClientSide {
 
 class ClientSide extends Actor {
 
-  val path = "akka.tcp://ServerSystem@127.0.0.1:2500/user/server";
+  val path = "akka.tcp://server@127.0.0.1:2500/user/server"
   val serverActor: ActorSelection = context.actorSelection(path)
 
   override def receive: Receive = {

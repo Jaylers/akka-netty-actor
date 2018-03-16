@@ -20,7 +20,11 @@ class DiscardServerHandler extends SimpleChannelUpstreamHandler {
           case ChannelState.BOUND => println("ChannelState is now bound")
           case ChannelState.CONNECTED => {
             //Build Actor and send back
+            println("ChannelState is now connected")
+            val address = ActorGenerator.generate()
+            println(address.path + " name : " + address.path.name + " address : " + address.path.address)
           }
+          case ChannelState.INTEREST_OPS => println("Ops! Something wrong")
         }
       }
       case _                    => println("get none")
