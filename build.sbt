@@ -21,6 +21,5 @@ lazy val library = Seq(
 
 lazy val Client = project.settings(libraryDependencies ++= library).dependsOn(Shared)
 lazy val Server =  project.settings(libraryDependencies ++= library).dependsOn(Shared)
-lazy val Netto =  project.settings(libraryDependencies ++= library).dependsOn(Shared)
 
 lazy val Shared = project.in(file("Shared")).settings(common)
