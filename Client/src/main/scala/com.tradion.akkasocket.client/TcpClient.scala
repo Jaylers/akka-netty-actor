@@ -7,7 +7,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.channel.{ChannelInitializer, ChannelOption}
 import io.netty.handler.logging.{LogLevel, LoggingHandler}
 
-class TcpClient(port: Int){
+class TcpClient(){
 
 
   val bossGroup = new NioEventLoopGroup
@@ -28,8 +28,8 @@ class TcpClient(port: Int){
         .childOption(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)
 
       // Bind and start to accept incoming connections.
-      println("[TcpClient] New connection on port: " + port)
-      val future = bootstrap.bind(port).sync()
+      println("[TcpClient] New TCP connection")
+      val future = bootstrap.bind().sync()
       future.channel().closeFuture().sync()
 
       // Wait until the server socket is closed.
