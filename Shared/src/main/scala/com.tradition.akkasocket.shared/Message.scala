@@ -5,4 +5,7 @@ object SharedMessage {
   case class CodeResponse(code: Code)
   case class JayRequest(s: String)
   case class JayResponse(s: String)
+
+  case class ServerRequest(s:String)
+  case class ServerResponse(s:String)
 }

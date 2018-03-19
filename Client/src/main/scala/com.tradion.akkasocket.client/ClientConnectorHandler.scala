@@ -25,9 +25,14 @@ class ClientConnectorHandler() extends ChannelInboundHandlerAdapter{
     buf.writeBytes(message)
 
     message.release
-    if (buf.readableBytes >= 4) {
+    if (buf.readableBytes >= 3) {
       val message = buf.readInt()
-      println("[ClientConnectorHandler] Connection status : " + message)
+      if(message == 200){
+        println("[ClientConnectorHandler] Connection status : " + message)
+      } else if (buf.readableBytes() >= 4){
+        ActorClient.generate(message)
+      }
+
       ctx.close
     }
   }

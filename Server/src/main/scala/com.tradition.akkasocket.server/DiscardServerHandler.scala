@@ -7,6 +7,7 @@ class DiscardServerHandler extends ChannelInboundHandlerAdapter{
 
   override def channelActive(ctx: ChannelHandlerContext): Unit = {
     println("Channel status : ACTIVE")
+    ActorServer.generate(ctx)
   }
 
   override def channelRead(ctx: ChannelHandlerContext, msg: Object): Unit = {
