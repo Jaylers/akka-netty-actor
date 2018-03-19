@@ -1,7 +1,5 @@
 package com.tradition.akkasocket.server
 
-import java.net.ServerSocket
-
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
@@ -22,7 +20,7 @@ class DiscardServer {
         .childHandler( new ChannelInitializer[SocketChannel] {
           @throws[Exception]
           override def initChannel(ch: SocketChannel): Unit = {
-            ch.pipeline.addLast(new DiscardServerHandler(()=> ServerGenerator()))
+            ch.pipeline.addLast(new DiscardServerHandler())
           }
         }).option(ChannelOption.SO_BACKLOG, 128: java.lang.Integer)
         .childOption(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)
@@ -40,12 +38,7 @@ class DiscardServer {
     bossGroup.shutdownGracefully()
   }
 
-  def ServerGenerator():Int={
-    val np = new ServerSocket(0)
-    val port = np.getLocalPort
-    np.close()
-
-    println("RANDOM PORT : " + port)
+  def ServerGenerator():Unit={
     try {
       val bt = new ServerBootstrap()
       bt.group(bossGroup, workerGroup)
@@ -53,23 +46,18 @@ class DiscardServer {
         .childHandler( new ChannelInitializer[SocketChannel] {
           @throws[Exception]
           override def initChannel(ch: SocketChannel): Unit = {
-            ch.pipeline.addLast(new DiscardServerHandler(()=> ServerGenerator()))
+            ch.pipeline.addLast(new DiscardServerHandler())
           }
         })
         .option(ChannelOption.SO_BACKLOG, 128: java.lang.Integer)
         .childOption(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)
 
-      val ft = bt.bind(port).sync
-      println("New server starting on port : " + port)
+      val ft = bt.bind().sync
+      println("New server starting")
       ft.channel.closeFuture.sync
     } finally {
       workerGroup.shutdownGracefully()
       bossGroup.shutdownGracefully()
     }
-    port
-  }
-
-  def PortGenerator():Int ={
-    new ServerSocket(0).getLocalPort
   }
 }

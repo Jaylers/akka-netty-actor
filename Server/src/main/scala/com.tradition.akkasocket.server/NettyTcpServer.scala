@@ -11,11 +11,7 @@ object NettyTcpServer {
     Future(server.run())
 
     println("Server is now started")
-
-    var msg = "Press 'END' to Stop service"
-    do {
-      msg = StdIn.readLine()
-    } while (msg.toLowerCase.equals("end"))
+    StdIn.readLine()
 
     //close is a def of DiscardServer's method
     server.close()

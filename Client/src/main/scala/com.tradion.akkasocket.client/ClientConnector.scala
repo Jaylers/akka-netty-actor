@@ -7,9 +7,8 @@ import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 
 class ClientConnector {
-  var port: Option[Int] = None
 
-  def run(): Option[Int] = {
+  def run(): Unit = {
     val serverHost = "localhost"
     val serverPort = 9000
     val workerGroup = new NioEventLoopGroup
@@ -22,7 +21,7 @@ class ClientConnector {
       bootstrap.handler(new ChannelInitializer[SocketChannel]() {
         @throws[Exception]
         override def initChannel(ch: SocketChannel): Unit = {
-          ch.pipeline.addLast(new ClientConnectorHandler(clientPortCallback))
+          ch.pipeline.addLast(new ClientConnectorHandler())
         }
       })
       // Start the client.
@@ -33,13 +32,5 @@ class ClientConnector {
       workerGroup.shutdownGracefully()
       None
     }
-    println("[ClientConnector] Server return port : " + Some(port))
-    port
-  }
-
-  def clientPortCallback(newPort: Int): Unit = {
-    println(s"[ClientConnector] Get new port : $newPort")
-    // use some because if server did not send the port or connection error
-    port = Some(newPort)
   }
 }

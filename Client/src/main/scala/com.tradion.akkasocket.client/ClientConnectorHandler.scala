@@ -4,7 +4,7 @@ import io.netty.channel.{ChannelHandlerContext, ChannelInboundHandlerAdapter}
 import io.netty.util.ReferenceCountUtil
 import org.jboss.netty.channel.ChannelFuture
 
-class ClientConnectorHandler(clientPortCallback: Int => Unit) extends ChannelInboundHandlerAdapter{
+class ClientConnectorHandler() extends ChannelInboundHandlerAdapter{
   import io.netty.buffer.ByteBuf
   import io.netty.channel.ChannelHandlerContext
 
@@ -26,9 +26,8 @@ class ClientConnectorHandler(clientPortCallback: Int => Unit) extends ChannelInb
 
     message.release
     if (buf.readableBytes >= 4) {
-      val port = buf.readInt()
-      println("[ClientConnectorHandler] got new port: " + port)
-      clientPortCallback(port)
+      val message = buf.readInt()
+      println("[ClientConnectorHandler] Connection status : " + message)
       ctx.close
     }
   }
