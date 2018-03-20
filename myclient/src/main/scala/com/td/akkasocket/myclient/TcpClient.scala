@@ -9,16 +9,14 @@ import io.netty.channel.socket.nio.NioSocketChannel
 
 class TcpClient(port: Int) extends StrictLogging {
   val bossGroup = new NioEventLoopGroup
-  val workGroup = new NioEventLoopGroup
 
   def run(): Unit = {
     val host = "localhost"
     val port = 10500
-    val group = new NioEventLoopGroup
 
     try {
       val bootstrap = new Bootstrap()
-      bootstrap.group(group)
+      bootstrap.group(bossGroup)
       bootstrap.channel(classOf[NioSocketChannel])
       bootstrap.option(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)
       bootstrap.handler(new ChannelInitializer[SocketChannel](){
@@ -32,13 +30,12 @@ class TcpClient(port: Int) extends StrictLogging {
       val future = bootstrap.connect(host, port).sync()
       future.channel().closeFuture().sync()
     } finally {
-      group.shutdownGracefully()
+      bossGroup.shutdownGracefully()
     }
   }
 
   def close(): Unit = {
     bossGroup.shutdownGracefully()
-    workGroup.shutdownGracefully()
   }
 
 }
