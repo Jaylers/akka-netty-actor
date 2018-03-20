@@ -14,15 +14,15 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
   def receive: Receive = {
     case Heartbeat => // send heartbeat to client
       ctx.writeAndFlush(Unpooled.copiedBuffer("Heartbeat", CharsetUtil.UTF_8))
-      println("[ClientConnectorActor] Heartbeat")
+      log.info("[ClientConnectorActor] Heartbeat")
 
     case Kill => // close client connection
-      println("[ClientConnectorActor]: Kill " + sender.path.name)
+      log.info("[ClientConnectorActor]: Kill " + sender.path.name)
       ctx.close()
   }
 
   override def unhandled(message: Any): Unit = {
-    println("get unknown message : " + message)
+    log.info("get unknown message : " + message)
   }
 
 }

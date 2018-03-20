@@ -1,12 +1,13 @@
 package com.td.akkasocket.myclient
 
+import com.typesafe.scalalogging.StrictLogging
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.{ChannelInitializer, ChannelOption}
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 
-class TcpClient(port: Int) {
+class TcpClient(port: Int) extends StrictLogging {
   val bossGroup = new NioEventLoopGroup
   val workGroup = new NioEventLoopGroup
 
@@ -26,6 +27,7 @@ class TcpClient(port: Int) {
           ch.pipeline().addLast(new TcpClientHandler)
         }
       })
+      logger.info("Connecting server")
 
       val future = bootstrap.connect(host, port).sync()
       future.channel().closeFuture().sync()
