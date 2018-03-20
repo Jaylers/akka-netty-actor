@@ -12,8 +12,9 @@ object NettyTcpClientApp extends StrictLogging {
     Future(client.run())
     logger.info("Service is now started")
 
-    var msg = "Hello I'm client"
+    var msg = ""
     do {
+      logger.info("Press 'end' to stop service")
       msg = StdIn.readLine()
     } while (msg.toLowerCase() != "end")
     logger.info("Service is now stopped")
