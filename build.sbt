@@ -22,4 +22,7 @@ lazy val library = Seq(
 lazy val Client = project.settings(libraryDependencies ++= library).dependsOn(Shared)
 lazy val Server =  project.settings(libraryDependencies ++= library).dependsOn(Shared)
 
+lazy val myclient = project.settings(libraryDependencies ++= library).dependsOn(Shared)
+lazy val myserver = project.settings(libraryDependencies ++= library).dependsOn(Shared)
+
 lazy val Shared = project.in(file("Shared")).settings(common)
