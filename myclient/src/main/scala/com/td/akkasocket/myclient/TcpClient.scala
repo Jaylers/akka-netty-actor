@@ -1,0 +1,42 @@
+package com.td.akkasocket.myclient
+
+import io.netty.bootstrap.Bootstrap
+import io.netty.channel.{ChannelInitializer, ChannelOption}
+import io.netty.channel.nio.NioEventLoopGroup
+import io.netty.channel.socket.SocketChannel
+import io.netty.channel.socket.nio.NioSocketChannel
+
+class TcpClient(port: Int) {
+  val bossGroup = new NioEventLoopGroup
+  val workGroup = new NioEventLoopGroup
+
+  def run(): Unit = {
+    val host = "localhost"
+    val port = 10500
+    val group = new NioEventLoopGroup
+
+    try {
+      val bootstrap = new Bootstrap()
+      bootstrap.group(group)
+      bootstrap.channel(classOf[NioSocketChannel])
+      bootstrap.option(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)
+      bootstrap.handler(new ChannelInitializer[SocketChannel](){
+        @throws[Exception]
+        override def initChannel(ch: SocketChannel): Unit = {
+          ch.pipeline().addLast(new TcpClientHandler)
+        }
+      })
+
+      val future = bootstrap.connect(host, port).sync()
+      future.channel().closeFuture().sync()
+    } finally {
+      group.shutdownGracefully()
+    }
+  }
+
+  def close(): Unit = {
+    bossGroup.shutdownGracefully()
+    workGroup.shutdownGracefully()
+  }
+
+}
