@@ -35,8 +35,8 @@ class ProxyControllerActor(serverPort: Int) extends Actor with Timers with Actor
 
   Future(server.run(self))
 
-  timers.startPeriodicTimer("heartbeat", Heartbeat, 2.seconds)
-  timers.startPeriodicTimer("killer", RandomKill, 20.seconds)
+  timers.startPeriodicTimer("heartbeat", Heartbeat, 5.seconds) //Heartbeat every 5 sec.
+  timers.startPeriodicTimer("killer", RandomKill, 20.seconds) //Killer will random to kill every 20 sec.
 
   def receive: Receive = {
     case CreateClient(ctx) =>
@@ -53,12 +53,15 @@ class ProxyControllerActor(serverPort: Int) extends Actor with Timers with Actor
 
     case RandomKill =>
       if (clients.nonEmpty) {
-        val index = Random.nextInt(clients.size)
-        val (clientId, clientRef) = clients.toIndexedSeq.toList(index)
-        log.info(s"Random kill ($index)")
-
-        clientRef ! Kill
-        clients = clients - clientId
+        if (Random.nextInt(10) == 0){ //10% chance to kill the client
+          val index = Random.nextInt(clients.size)
+          val (clientId, clientRef) = clients.toIndexedSeq.toList(index)
+          log.info(s"Random 10% : index ($index) was killed")
+          clientRef ! Kill
+          clients = clients - clientId
+        } else {
+          log.info("So lucky, No one get kill")
+        }
       }
   }
 
