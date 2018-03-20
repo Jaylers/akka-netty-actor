@@ -1,7 +1,7 @@
 package com.td.akkasocket.myserver.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.td.akkasocket.myserver.actor.ProxyControllerActor.{Heartbeat, Kill}
+import com.tradition.akkasocket.shared.Code.{Heartbeat, Kill}
 import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelHandlerContext
 import io.netty.util.CharsetUtil
@@ -17,7 +17,7 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
       log.info("[ClientConnectorActor] Heartbeat")
 
     case Kill => // close client connection
-      log.info("[ClientConnectorActor]: Kill " + sender.path.name)
+      log.info("[ClientConnectorActor]: Kill " + sender.path.address)
       ctx.close()
   }
 

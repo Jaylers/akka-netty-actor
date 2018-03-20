@@ -4,26 +4,18 @@ import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
 import com.td.akkasocket.myserver.ProxyServer
-import com.td.akkasocket.myserver.actor.ProxyControllerActor.{CreateClient, Heartbeat, Kill, RandomKill}
+import com.td.akkasocket.myserver.actor.ProxyControllerActor.CreateClient
+import com.tradition.akkasocket.shared.Code.{Heartbeat, Kill, RandomKill}
 import io.netty.channel.ChannelHandlerContext
 
 import scala.concurrent.Future
 import scala.util.Random
-
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object ProxyControllerActor {
   def props(serverPort: Int): Props = Props(new ProxyControllerActor(serverPort))
-
   case class CreateClient(ctx: ChannelHandlerContext)
-
-  case object Heartbeat
-
-  case object Kill
-
-  case object RandomKill
-
 }
 
 class ProxyControllerActor(serverPort: Int) extends Actor with Timers with ActorLogging {

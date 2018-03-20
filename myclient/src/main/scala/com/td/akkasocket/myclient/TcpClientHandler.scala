@@ -9,7 +9,12 @@ class TcpClientHandler extends ChannelInboundHandlerAdapter with StrictLogging {
   override def channelRead(ctx: ChannelHandlerContext, msg: scala.Any): Unit = {
     val in = msg.asInstanceOf[ByteBuf]
     val message = in.toString(CharsetUtil.UTF_8)
-    logger.info("[TcpClientHandler] get message : " + message)
+    message match {
+      case "Heartbeat" => logger.info("[TcpClientHandler] get : " + message)
+      case "Kill" => logger.warn("We got killed from server")
+        ctx.close()
+      case _ => logger.info("[TcpClientHandler] get unknown : " + message)
+    }
   }
 
   override def exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable): Unit = {
