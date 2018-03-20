@@ -18,7 +18,6 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
 
     case Kill => // close client connection
       log.info("[ClientConnectorActor]: Kill " + sender.path)
-      ctx.writeAndFlush(Unpooled.copiedBuffer("Kill", CharsetUtil.UTF_8))
       ctx.close()
   }
 
