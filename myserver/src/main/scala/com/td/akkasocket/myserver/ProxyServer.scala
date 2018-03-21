@@ -1,5 +1,7 @@
 package com.td.akkasocket.myserver
 
+import java.net.InetSocketAddress
+
 import akka.actor.ActorRef
 import com.typesafe.scalalogging.StrictLogging
 import io.netty.bootstrap.ServerBootstrap
@@ -19,6 +21,7 @@ class ProxyServer(port:Int) extends StrictLogging {
       val boot = new ServerBootstrap
       boot.group(bossGroup, workGroup)
         .channel(classOf[NioServerSocketChannel])
+          .localAddress(new InetSocketAddress(port))
         .childHandler(new ChannelInitializer[SocketChannel](){
           override def initChannel(ch:SocketChannel):Unit={
             ch.pipeline.addLast(new ProxyServerHandler(controllerRef))
@@ -26,7 +29,7 @@ class ProxyServer(port:Int) extends StrictLogging {
         }).option(ChannelOption.SO_BACKLOG, 128: java.lang.Integer)
         .childOption(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)
       logger.info("Server is now started")
-      val future = boot.bind(port).sync()
+      val future = boot.bind().sync()
       future.channel.closeFuture.sync()
     } finally {
       close()

@@ -10,14 +10,14 @@ import scala.io.StdIn
 
 object NettyTcpServerApp extends StrictLogging {
   def main(args: Array[String]): Unit = {
-    val time = LocalDateTime.now().toLocalDate.toString.substring(0, 10).concat(" ").concat(LocalDateTime.now().toLocalTime.toString.substring(0, 8))
+    val time = LocalDateTime.now().toLocalDate.toString.substring(0, 10).concat(" ")
+      .concat(LocalDateTime.now().toLocalTime.toString.substring(0, 8))
     logger.info("******************************************************")
     logger.info("**           Welcome " + time        + "            **")
     logger.info("******************************************************")
-    val serverPort = 10500
 
     val system = ActorSystem("ProxyServer")
-    system.actorOf(ProxyControllerActor.props(serverPort), "ProxyController")
+    system.actorOf(ProxyControllerActor.props(10500), "ProxyController")
 
     var msg = ""
     do {
