@@ -27,7 +27,7 @@ class ProxyControllerActor(port:Int) extends Actor with Timers with ActorLogging
   Future(server.run(self))
 
   timers.startPeriodicTimer("heartbeat", Heartbeat, 5.seconds) //Heartbeat every 5 sec.
-  timers.startPeriodicTimer("killer", RandomKill, 20.seconds) //Killer will random to kill every 20 sec.
+  timers.startPeriodicTimer("killer", RandomKill, 20.seconds)  //Killer will random to kill every 20 sec.
 
   def receive: Receive = {
     case CreateClient(ctx) =>
@@ -39,13 +39,13 @@ class ProxyControllerActor(port:Int) extends Actor with Timers with ActorLogging
 
     case Heartbeat =>
       clients.foreach { clientRef =>
-        log.info(">> ["+clients.size+" client connected] sending Heartbeat")
+        log.info(">> sending "+clients.size+" Heartbeat")
         clientRef ! Heartbeat
       }
 
-    case RandomKill =>
+    case RandomKill => //do every 20 sec see how to on line 29
       if (clients.nonEmpty) {
-        if (Random.nextInt(10) >= 5){ //10% chance to kill the client
+        if (Random.nextInt(10) == 0){ //10% chance to kill the client
           val index = Random.nextInt(clients.size)
           val clientRef = clients.toIndexedSeq.toList(index)
           log.info(s"Random 10% : index ($index) was killed")
@@ -56,9 +56,10 @@ class ProxyControllerActor(port:Int) extends Actor with Timers with ActorLogging
         }
       }
 
-    case Terminated(actorRef) =>
+    case Terminated(actorRef) =>{
       log.info("Remove the disconnect client's actor")
       clients = clients - actorRef
+    }
   }
 
   override def unhandled(message: Any): Unit = {

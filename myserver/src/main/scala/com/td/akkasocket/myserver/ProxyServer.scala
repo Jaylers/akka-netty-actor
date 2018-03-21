@@ -15,7 +15,6 @@ class ProxyServer(port:Int) extends StrictLogging {
   val bossGroup = new NioEventLoopGroup
   val workGroup = new NioEventLoopGroup
 
-
   def run (controllerRef: ActorRef): Unit = {
     try {
       val boot = new ServerBootstrap
