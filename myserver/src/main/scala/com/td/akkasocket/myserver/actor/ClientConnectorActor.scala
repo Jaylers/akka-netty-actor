@@ -1,23 +1,30 @@
 package com.td.akkasocket.myserver.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, PoisonPill, Props}
 import com.tradition.akkasocket.shared.Code.{Heartbeat, Kill}
 import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelHandlerContext
 import io.netty.util.CharsetUtil
+import io.netty.util.concurrent.Future
 
 object ClientConnectorActor {
   def props(ctx: ChannelHandlerContext): Props = Props(new ClientConnectorActor(ctx))
 }
 
 class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorLogging {
+
+  ctx.channel.closeFuture.addListener((_: Future[Void]) => { // if the coming ctx is disconnected Client
+    log.info("ClientConnectorActor ctx channel closeFuture -> OperationComplete")
+    self ! PoisonPill
+  })
+
   def receive: Receive = {
     case Heartbeat => // send heartbeat to client
       ctx.writeAndFlush(Unpooled.copiedBuffer("Heartbeat", CharsetUtil.UTF_8))
       log.info("[ClientConnectorActor] Heartbeat")
 
     case Kill => // close client connection
-      log.info("[ClientConnectorActor]: Kill " + sender.path)
+      log.info("[ClientConnectorActor]: Server kill " + sender.path)
       ctx.close()
   }
 
@@ -25,5 +32,8 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
     log.info("get unknown message : " + message)
   }
 
+  override def postStop(): Unit = {
+    log.info("ClientConnectorActor: post stop")
+  }
 }
 
