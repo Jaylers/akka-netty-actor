@@ -48,18 +48,14 @@ class ProxyControllerActor(port:Int) extends Actor with Timers with ActorLogging
         if (Random.nextInt(10) == 0){ //10% chance to kill the client
           val index = Random.nextInt(clients.size)
           val clientRef = clients.toIndexedSeq.toList(index)
-          log.info(s"Random 10% : index ($index) was killed")
+          log.info(s"Random 10% : ($clientRef) was killed")
           clientRef ! Kill
-          clients = clients - clientRef
-        } else {
-          log.info("So lucky, No one get kill")
-        }
-      }
+        } else { log.info("So lucky, No one get kill") }
+      } else { log.info("Server is running ... ") }
 
-    case Terminated(actorRef) =>{
+    case Terminated(actorRef) =>
       log.info("Remove the disconnect client's actor")
       clients = clients - actorRef
-    }
   }
 
   override def unhandled(message: Any): Unit = {

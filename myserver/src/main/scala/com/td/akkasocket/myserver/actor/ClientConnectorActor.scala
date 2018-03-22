@@ -15,16 +15,16 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
 
   ctx.channel.closeFuture.addListener((_: Future[Void]) => { // if the coming ctx is disconnected Client
     log.info("ClientConnectorActor ctx channel closeFuture -> OperationComplete")
-    self ! PoisonPill
+    context.stop(self)
   })
 
   def receive: Receive = {
     case Heartbeat => // send heartbeat to client
-      ctx.writeAndFlush(Unpooled.copiedBuffer("Heartbeat", CharsetUtil.UTF_8))
-      log.info("[ClientConnectorActor] Heartbeat")
+      ctx.writeAndFlush(Unpooled.copiedBuffer( Heartbeat.toString , CharsetUtil.UTF_8))
+      log.info("[ClientConnectorActor] "+ Heartbeat)
 
     case Kill => // close client connection
-      log.info("[ClientConnectorActor]: Server kill " + sender.path)
+      log.info("[ClientConnectorActor]: channel id : " + ctx.channel().id() + " gone")
       ctx.close()
   }
 
