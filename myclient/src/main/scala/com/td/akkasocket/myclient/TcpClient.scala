@@ -7,6 +7,7 @@ import io.netty.channel.{ChannelInitializer, ChannelOption}
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
+import io.netty.handler.codec.http.{HttpRequestDecoder, HttpResponseEncoder}
 import io.netty.handler.codec.{DelimiterBasedFrameDecoder, Delimiters}
 
 class TcpClient(port: Int) extends StrictLogging {
@@ -28,8 +29,10 @@ class TcpClient(port: Int) extends StrictLogging {
         Unpooled.wrappedBuffer(Array[Byte]('/'))) //Custom to separated the message instead of default \n
       bootstrap.handler(new ChannelInitializer[SocketChannel](){
         @throws[Exception]
-        override def initChannel(ch: SocketChannel): Unit = {
-          ch.pipeline()
+        override def initChannel(channel: SocketChannel): Unit = {
+          channel.pipeline()
+            .addLast("decode", new HttpRequestDecoder())
+            .addLast("encode", new HttpResponseEncoder())
             .addFirst(new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
             .addLast(new TcpClientHandler)
         }

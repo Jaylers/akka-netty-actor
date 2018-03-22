@@ -20,9 +20,8 @@ class ProxyServer(port:Int) extends StrictLogging {
       val boot = new ServerBootstrap
       boot.group(bossGroup, workGroup)
         .channel(classOf[NioServerSocketChannel])
-          .localAddress(new InetSocketAddress(port))
+        .localAddress(new InetSocketAddress(port))
         .childHandler(new ChannelInitializer[SocketChannel](){
-
           override def initChannel(ch:SocketChannel):Unit={
             ch.pipeline.addLast(new ProxyServerHandler(controllerRef))
           }
