@@ -9,7 +9,6 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.channel.{ChannelInitializer, ChannelOption}
-import io.netty.handler.codec.{DelimiterBasedFrameDecoder, Delimiters}
 
 class ProxyServer(port:Int) extends StrictLogging {
 
@@ -23,10 +22,9 @@ class ProxyServer(port:Int) extends StrictLogging {
         .channel(classOf[NioServerSocketChannel])
           .localAddress(new InetSocketAddress(port))
         .childHandler(new ChannelInitializer[SocketChannel](){
+
           override def initChannel(ch:SocketChannel):Unit={
-            ch.pipeline
-              .addLast(new DelimiterBasedFrameDecoder(4096, true, Delimiters.lineDelimiter(): _*))
-              .addLast(new ProxyServerHandler(controllerRef))
+            ch.pipeline.addLast(new ProxyServerHandler(controllerRef))
           }
         }).option(ChannelOption.SO_BACKLOG, 128: java.lang.Integer)
         .childOption(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)

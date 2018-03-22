@@ -2,6 +2,7 @@ package com.td.akkasocket.myclient
 
 import com.typesafe.scalalogging.StrictLogging
 import io.netty.bootstrap.Bootstrap
+import io.netty.buffer.{ByteBuf, Unpooled}
 import io.netty.channel.{ChannelInitializer, ChannelOption}
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
@@ -20,10 +21,17 @@ class TcpClient(port: Int) extends StrictLogging {
       bootstrap.group(bossGroup)
       bootstrap.channel(classOf[NioSocketChannel])
       bootstrap.option(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)
+
+      val delimiters: Array[ByteBuf] = Array[ByteBuf](
+        Unpooled.wrappedBuffer(Array[Byte]('\n')),
+        Unpooled.wrappedBuffer(Array[Byte]('|')),
+        Unpooled.wrappedBuffer(Array[Byte]('/'))) //Custom to separated the message instead of default \n
       bootstrap.handler(new ChannelInitializer[SocketChannel](){
         @throws[Exception]
         override def initChannel(ch: SocketChannel): Unit = {
-          ch.pipeline().addLast(new DelimiterBasedFrameDecoder(4096, true, Delimiters.lineDelimiter(): _*)).addLast(new TcpClientHandler)
+          ch.pipeline()
+            .addFirst(new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
+            .addLast(new TcpClientHandler)
         }
       })
       logger.info("Connecting server")

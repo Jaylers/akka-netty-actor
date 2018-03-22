@@ -20,7 +20,8 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
 
   def receive: Receive = {
     case Heartbeat => // send heartbeat to client
-      for (_ <- 1 to 5){ ctx.writeAndFlush(Unpooled.copiedBuffer( s"${Heartbeat.toString}\r\n" , CharsetUtil.UTF_8)) }
+      val msg = "Heartbeat|Heartbeat/Heartbeat\nHeartbeat"
+      for (_ <- 0 to 2){ ctx.writeAndFlush(Unpooled.copiedBuffer( msg , CharsetUtil.UTF_8)) }//this "for loop" is for test
       log.info("[ClientConnectorActor] "+ Heartbeat)
 
     case Kill => // close client connection
