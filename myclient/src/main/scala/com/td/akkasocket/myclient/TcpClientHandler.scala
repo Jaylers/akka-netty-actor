@@ -16,6 +16,10 @@ class TcpClientHandler extends ChannelInboundHandlerAdapter with StrictLogging {
   }
 
 
+  override def channelReadComplete(ctx: ChannelHandlerContext): Unit = {
+    logger.info("channelReadComplete" + ctx.channel().id())
+  }
+
   override def channelInactive(ctx: ChannelHandlerContext): Unit = {
     logger.info("Something wrong, We got killed!")
     ctx.close()

@@ -20,7 +20,7 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
 
   def receive: Receive = {
     case Heartbeat => // send heartbeat to client
-      ctx.writeAndFlush(Unpooled.copiedBuffer( Heartbeat.toString , CharsetUtil.UTF_8))
+      for (_ <- 1 to 5){ ctx.writeAndFlush(Unpooled.copiedBuffer( s"${Heartbeat.toString}\r\n" , CharsetUtil.UTF_8)) }
       log.info("[ClientConnectorActor] "+ Heartbeat)
 
     case Kill => // close client connection

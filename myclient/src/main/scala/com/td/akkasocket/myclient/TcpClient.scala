@@ -6,6 +6,7 @@ import io.netty.channel.{ChannelInitializer, ChannelOption}
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
+import io.netty.handler.codec.{DelimiterBasedFrameDecoder, Delimiters}
 
 class TcpClient(port: Int) extends StrictLogging {
   val bossGroup = new NioEventLoopGroup
@@ -22,7 +23,7 @@ class TcpClient(port: Int) extends StrictLogging {
       bootstrap.handler(new ChannelInitializer[SocketChannel](){
         @throws[Exception]
         override def initChannel(ch: SocketChannel): Unit = {
-          ch.pipeline().addLast(new TcpClientHandler)
+          ch.pipeline().addLast(new DelimiterBasedFrameDecoder(4096, true, Delimiters.lineDelimiter(): _*)).addLast(new TcpClientHandler)
         }
       })
       logger.info("Connecting server")
