@@ -1,11 +1,12 @@
 package com.td.akkasocket.myserver.actor
 
-import akka.actor.{Actor, ActorLogging, PoisonPill, Props}
+import akka.actor.{Actor, ActorLogging, Props}
 import com.tradition.akkasocket.shared.Code.{Heartbeat, Kill}
 import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelHandlerContext
 import io.netty.util.CharsetUtil
 import io.netty.util.concurrent.Future
+import org.json4s.native.JsonMethods._
 
 object ClientConnectorActor {
   def props(ctx: ChannelHandlerContext): Props = Props(new ClientConnectorActor(ctx))
@@ -20,9 +21,10 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
 
   def receive: Receive = {
     case Heartbeat => // send heartbeat to client
-      val msg = "Heartbeat|Heartbeat/Heartbeat\nHeartbeat"
-      for (_ <- 0 to 2){ ctx.writeAndFlush(Unpooled.copiedBuffer( msg , CharsetUtil.UTF_8)) }//this "for loop" is for test
-      log.info("[ClientConnectorActor] "+ Heartbeat)
+      val msg = parse("""{"value":"Heartbeat"}""")
+      val msgggg = compact(render(msg))
+      ctx.writeAndFlush(Unpooled.copiedBuffer( msgggg , CharsetUtil.UTF_8))
+      log.info("[ClientConnectorActor] Heartbeat => "+ msgggg)
 
     case Kill => // close client connection
       log.info("[ClientConnectorActor]: channel id : " + ctx.channel().id() + " gone")
