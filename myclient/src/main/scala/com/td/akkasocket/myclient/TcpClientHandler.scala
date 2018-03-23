@@ -20,19 +20,19 @@ class TcpClientHandler extends ChannelInboundHandlerAdapter with StrictLogging {
     data.value match {//message from server
       case "Heartbeat" => logger.info("[TCH] Get : " + data.value)
       case "Hello from SERVER" => logger.info(data.value)
-      case _ => logger.info("[TCH] get unknown : " + message +"  ")
+      case x => if(isInt(x)) logger.info("[TCH] server pupulation : " + message + " people")
+                else logger.info("[TCH] get unknown : " + message)
     }
   }
 
-  def getData(message: String):Data = {
+  def getData(str: String):Data = {
     try {
-      val json = message.parseJson
+      val json = str.parseJson
       json.convertTo[Data]
-    } catch  {
-      case _: Throwable => Data(message)
-    }
+    } catch { case _: Throwable => Data(str) }
   }
 
+  def isInt(str: String):Boolean = { try { str.toInt } catch { case _: Throwable => return false }; true }
 
   override def channelReadComplete(ctx: ChannelHandlerContext): Unit = {
     logger.info("channelReadComplete" + ctx.channel().id())

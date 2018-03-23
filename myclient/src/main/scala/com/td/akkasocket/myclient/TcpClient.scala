@@ -7,6 +7,7 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.channel.{ChannelInitializer, ChannelOption}
+import io.netty.handler.codec.DelimiterBasedFrameDecoder
 
 class TcpClient(port: Int) extends StrictLogging {
   val bossGroup = new NioEventLoopGroup
@@ -22,14 +23,13 @@ class TcpClient(port: Int) extends StrictLogging {
       bootstrap.option(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)
 
       val delimiters: Array[ByteBuf] = Array[ByteBuf](
-        Unpooled.wrappedBuffer(Array[Byte]('\n')),
         Unpooled.wrappedBuffer(Array[Byte]('|')),
         Unpooled.wrappedBuffer(Array[Byte]('/'))) //Custom to separated the message instead of default \n
       bootstrap.handler(new ChannelInitializer[SocketChannel](){
         @throws[Exception]
         override def initChannel(channel: SocketChannel): Unit = {
           channel.pipeline()
-            //.addFirst(new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
+            .addFirst(new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
             .addLast(new TcpClientHandler)
         }
       })

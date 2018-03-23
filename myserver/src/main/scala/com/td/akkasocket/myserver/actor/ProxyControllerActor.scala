@@ -3,7 +3,7 @@ package com.td.akkasocket.myserver.actor
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated, Timers}
 import com.td.akkasocket.myserver.ProxyServer
 import com.td.akkasocket.myserver.actor.ProxyControllerActor.CreateClient
-import com.tradition.akkasocket.shared.Code.{Heartbeat, Kill, RandomKill}
+import com.tradition.akkasocket.shared.Code.{Born, Heartbeat, Kill, RandomKill}
 import io.netty.channel.ChannelHandlerContext
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -36,6 +36,10 @@ class ProxyControllerActor(port:Int) extends Actor with Timers with ActorLogging
       val client: ActorRef = context.actorOf(ClientConnectorActor.props(ctx))
       context.watch(client)
       clients = clients + client
+      clients.foreach { clientRef =>
+        log.info(">> sending pupulation")
+        clientRef ! clients.size
+      }
 
     case Heartbeat =>
       clients.foreach { clientRef =>
@@ -56,6 +60,10 @@ class ProxyControllerActor(port:Int) extends Actor with Timers with ActorLogging
     case Terminated(actorRef) =>
       log.info("Remove the disconnect client's actor")
       clients = clients - actorRef
+      clients.foreach { clientRef =>
+        log.info(">> sending pupulation")
+        clientRef ! clients.size
+      }
   }
 
   override def unhandled(message: Any): Unit = {
