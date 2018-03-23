@@ -3,12 +3,10 @@ package com.td.akkasocket.myclient
 import com.typesafe.scalalogging.StrictLogging
 import io.netty.bootstrap.Bootstrap
 import io.netty.buffer.{ByteBuf, Unpooled}
-import io.netty.channel.{ChannelInitializer, ChannelOption}
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
-import io.netty.handler.codec.http.{HttpRequestDecoder, HttpResponseEncoder}
-import io.netty.handler.codec.{DelimiterBasedFrameDecoder, Delimiters}
+import io.netty.channel.{ChannelInitializer, ChannelOption}
 
 class TcpClient(port: Int) extends StrictLogging {
   val bossGroup = new NioEventLoopGroup
@@ -31,9 +29,7 @@ class TcpClient(port: Int) extends StrictLogging {
         @throws[Exception]
         override def initChannel(channel: SocketChannel): Unit = {
           channel.pipeline()
-            .addLast("decode", new HttpRequestDecoder())
-            .addLast("encode", new HttpResponseEncoder())
-            .addFirst(new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
+            //.addFirst(new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
             .addLast(new TcpClientHandler)
         }
       })
