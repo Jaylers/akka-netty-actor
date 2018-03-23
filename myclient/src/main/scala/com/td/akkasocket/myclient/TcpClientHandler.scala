@@ -15,7 +15,7 @@ class TcpClientHandler extends ChannelInboundHandlerAdapter with StrictLogging {
   import MyJsonProtocol._
   override def channelRead(ctx: ChannelHandlerContext, msg: scala.Any): Unit = {
     val in = msg.asInstanceOf[ByteBuf]
-    val message = in.toString(CharsetUtil.UTF_8) //{"value": "xxxxxxx"}
+    val message = in.toString(CharsetUtil.UTF_8)
     val data = getData(message)
     data.value match {//message from server
       case "Heartbeat" => logger.info("[TCH] Get : " + data.value)
