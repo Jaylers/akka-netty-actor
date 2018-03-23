@@ -1,15 +1,22 @@
 package com.td.akkasocket.myserver
 
 import akka.actor.ActorRef
-import com.td.akkasocket.myserver.actor.ProxyControllerActor.{CreateClient, RemoveClient}
+import com.td.akkasocket.myserver.actor.ProxyControllerActor.CreateClient
 import com.typesafe.scalalogging.StrictLogging
 import io.netty.buffer.Unpooled
 import io.netty.channel.{ChannelHandlerContext, ChannelInboundHandlerAdapter}
 import io.netty.util.CharsetUtil
+import spray.json.{DefaultJsonProtocol, _}
 
 class ProxyServerHandler(controllerActor: ActorRef) extends ChannelInboundHandlerAdapter with StrictLogging {
+  case class Data(value:String)
+  object MyJsonProtocol extends DefaultJsonProtocol {
+    implicit val myFormat = jsonFormat1(Data)
+  }
+  import MyJsonProtocol._
+
   override def channelActive(ctx: ChannelHandlerContext): Unit = {
-    ctx.writeAndFlush(Unpooled.copiedBuffer("Hello from SERVER\n", CharsetUtil.UTF_8))
+    ctx.writeAndFlush(Unpooled.copiedBuffer( Data("Hello from SERVER").toJson.prettyPrint , CharsetUtil.UTF_8))
     controllerActor ! CreateClient(ctx)  //Create Actor when client was connected
   }
 
