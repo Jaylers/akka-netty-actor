@@ -9,8 +9,8 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.channel.{ChannelInitializer, ChannelOption}
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder
-import io.netty.handler.codec.string.StringEncoder
+import io.netty.handler.codec.{LengthFieldBasedFrameDecoder, LengthFieldPrepender}
+import io.netty.handler.codec.string.{StringDecoder, StringEncoder}
 import io.netty.util.CharsetUtil
 
 class ProxyServer(port:Int) extends StrictLogging {
@@ -28,6 +28,10 @@ class ProxyServer(port:Int) extends StrictLogging {
           override def initChannel(channel:SocketChannel):Unit={
             channel.pipeline
               .addFirst(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 1, 1, 0))
+              .addFirst(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4))
+              //.addFirst("separate", new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
+              .addLast("frameEncoder", new LengthFieldPrepender(4))
+              .addLast("decoder", new StringDecoder(CharsetUtil.UTF_8))
               .addLast("encoder", new StringEncoder(CharsetUtil.UTF_8))
               .addLast("handler", new ProxyServerHandler(controllerRef))
           }
