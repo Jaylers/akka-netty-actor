@@ -26,11 +26,11 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
     case Heartbeat => // send heartbeat to client
       val json = Data("Heartbeat").toJson
 //      ctx.writeAndFlush(Unpooled.copiedBuffer( json.prettyPrint + "/", CharsetUtil.UTF_8))
-      ctx.writeAndFlush(json.prettyPrint+ "/")
+      ctx.writeAndFlush(json.prettyPrint+ "")
 
     case int:Int =>
 //      ctx.writeAndFlush(Unpooled.copiedBuffer( int + "/", CharsetUtil.UTF_8))
-      ctx.writeAndFlush(int + "/")
+      ctx.writeAndFlush(int + "")
       log.info("Now, we have " + int + " people connected")
 
     case News =>
@@ -42,7 +42,7 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
         " first and second drafts of this article, the number climbed to seven bodies and six charges. One man remains" +
         " unidentified. Abdulbasir remains missing.").toJson
 //      ctx.writeAndFlush(Unpooled.copiedBuffer( json.prettyPrint + "/", CharsetUtil.UTF_8))
-      ctx.writeAndFlush(json.prettyPrint+"/")
+      ctx.writeAndFlush(json.prettyPrint+"")
       log.info("[ClientConnectorActor] News Announce")
 
     case Kill => // close client connection

@@ -32,8 +32,8 @@ class TcpClient(port: Int) extends StrictLogging {
         @throws[Exception]
         override def initChannel(channel: SocketChannel): Unit = {
           channel.pipeline
-            .addFirst(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, '/', 1, 0, 1))
-            .addFirst("separate", new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
+            .addFirst(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 1, 1, 0))
+            //.addFirst("separate", new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
             .addLast("decode", new StringDecoder(CharsetUtil.UTF_8))
             .addLast("handler", new TcpClientHandler)
         }
