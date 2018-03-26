@@ -33,7 +33,7 @@ class TcpClientHandler extends ChannelInboundHandlerAdapter with StrictLogging {
   def isInt(str: String):Boolean = { try { str.toInt } catch { case _: Throwable => return false }; true }
 
   override def channelReadComplete(ctx: ChannelHandlerContext): Unit = {
-    logger.info("channelReadComplete" + ctx.channel().id())
+    logger.info("channelReadComplete")
   }
 
   override def channelInactive(ctx: ChannelHandlerContext): Unit = {

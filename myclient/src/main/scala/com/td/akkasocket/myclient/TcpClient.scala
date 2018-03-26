@@ -9,7 +9,7 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.channel.{ChannelInitializer, ChannelOption}
-import io.netty.handler.codec.DelimiterBasedFrameDecoder
+import io.netty.handler.codec.{DelimiterBasedFrameDecoder, LengthFieldBasedFrameDecoder}
 import io.netty.handler.codec.string.StringDecoder
 import io.netty.util.CharsetUtil
 
@@ -32,7 +32,8 @@ class TcpClient(port: Int) extends StrictLogging {
         @throws[Exception]
         override def initChannel(channel: SocketChannel): Unit = {
           channel.pipeline
-            .addFirst("separated", new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
+            .addFirst(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, '/', 1, 0, 1))
+            .addFirst("separate", new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
             .addLast("decode", new StringDecoder(CharsetUtil.UTF_8))
             .addLast("handler", new TcpClientHandler)
         }
