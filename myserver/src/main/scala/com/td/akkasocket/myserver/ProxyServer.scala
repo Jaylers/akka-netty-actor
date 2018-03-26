@@ -9,6 +9,8 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.channel.{ChannelInitializer, ChannelOption}
+import io.netty.handler.codec.string.StringEncoder
+import io.netty.util.CharsetUtil
 
 class ProxyServer(port:Int) extends StrictLogging {
 
@@ -24,7 +26,8 @@ class ProxyServer(port:Int) extends StrictLogging {
         .childHandler(new ChannelInitializer[SocketChannel](){
           override def initChannel(channel:SocketChannel):Unit={
             channel.pipeline
-              .addLast(new ProxyServerHandler(controllerRef))
+              .addFirst("encoder", new StringEncoder(CharsetUtil.UTF_8))
+              .addLast("handler", new ProxyServerHandler(controllerRef))
           }
         }).option(ChannelOption.SO_BACKLOG, 128: java.lang.Integer)
         .childOption(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)

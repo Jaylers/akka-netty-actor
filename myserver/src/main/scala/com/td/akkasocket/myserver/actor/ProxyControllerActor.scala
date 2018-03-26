@@ -28,7 +28,7 @@ class ProxyControllerActor(port:Int) extends Actor with Timers with ActorLogging
 
   timers.startPeriodicTimer("heartbeat", Heartbeat, 5.seconds) //Heartbeat every 5 sec.
   timers.startPeriodicTimer("killer", RandomKill, 20.seconds)  //Killer will random to kill every 20 sec.
-  timers.startPeriodicTimer("news", News, 60.second) //killer will send a news every 60 sec.
+  timers.startPeriodicTimer("news", News, 25.second) //killer will send a news every 60 sec.
 
   def receive: Receive = {
     case CreateClient(ctx) =>

@@ -10,7 +10,7 @@ import io.netty.util.CharsetUtil
 class ProxyServerHandler(controllerActor: ActorRef) extends ChannelInboundHandlerAdapter with StrictLogging {
 
   override def channelActive(ctx: ChannelHandlerContext): Unit = {
-    ctx.writeAndFlush(Unpooled.copiedBuffer( "Hello from SERVER|" , CharsetUtil.UTF_8))
+    ctx.writeAndFlush("Hello from SERVER/")
     controllerActor ! CreateClient(ctx)  //Create Actor when client was connected
   }
 

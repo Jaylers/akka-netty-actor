@@ -1,9 +1,7 @@
 package com.td.akkasocket.myclient
 
 import com.typesafe.scalalogging.StrictLogging
-import io.netty.buffer.ByteBuf
 import io.netty.channel.{ChannelHandlerContext, ChannelInboundHandlerAdapter}
-import io.netty.util.CharsetUtil
 import spray.json._
 
 class TcpClientHandler extends ChannelInboundHandlerAdapter with StrictLogging {
@@ -14,14 +12,14 @@ class TcpClientHandler extends ChannelInboundHandlerAdapter with StrictLogging {
 
   import MyJsonProtocol._
   override def channelRead(ctx: ChannelHandlerContext, msg: scala.Any): Unit = {
-    val in = msg.asInstanceOf[ByteBuf]
-    val message = in.toString(CharsetUtil.UTF_8)
-    val data = getData(message)
+//    val in = msg.asInstanceOf[ByteBuf]
+//    val message = in.toString(CharsetUtil.UTF_8)
+    val data = getData(msg.toString)
     data.value match {//message from server
       case "Heartbeat" => logger.info("[TCH] Get : " + data.value)
       case "Hello from SERVER" => logger.info(data.value)
-      case x => if(isInt(x)) logger.info("[TCH] server pupulation : " + message + " people")
-                else logger.info("[TCH] get unknown : " + message)
+      case x => if(isInt(x)) logger.info("[TCH] server pupulation : " + data.value + " people")
+                else logger.info("[TCH] get unknown : " + data.value)
     }
   }
 
