@@ -51,7 +51,7 @@ class ProxyControllerActor(port:Int) extends Actor with Timers with ActorLogging
         if (Random.nextInt(10) == 0){ //10% chance to kill the client
           val index = Random.nextInt(clients.size)
           val clientRef = clients.toIndexedSeq.toList(index)
-          log.info(s"Random 10% : ($clientRef) was killed")
+          log.info(s"[10% Random] : ($clientRef) was killed")
           clientRef ! Kill
         } else { log.info("So lucky, No one get kill") }
       } else { log.info("Server is running ... ") }

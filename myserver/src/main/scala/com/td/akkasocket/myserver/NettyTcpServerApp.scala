@@ -12,12 +12,8 @@ object NettyTcpServerApp extends StrictLogging {
 
     val system = ActorSystem("ProxyServer")
     system.actorOf(ProxyControllerActor.props(10500), "ProxyController")
-
-    var msg = ""
-    do {
-      logger.info("Press 'end' to stop service")
-      msg = StdIn.readLine()
-    } while (msg.toLowerCase != "end")
+    logger.info("Any key to stop service")
+    StdIn.readLine()
     logger.info("Server is now Closes")
     system.terminate()
   }
