@@ -3,7 +3,7 @@ package com.td.akkasocket.myserver.actor
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated, Timers}
 import com.td.akkasocket.myserver.ProxyServer
 import com.td.akkasocket.myserver.actor.ProxyControllerActor.CreateClient
-import com.tradition.akkasocket.shared.Code.{Heartbeat, Kill, RandomKill}
+import com.tradition.akkasocket.shared.Code.{Heartbeat, Kill, News, RandomKill}
 import io.netty.channel.ChannelHandlerContext
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,6 +28,7 @@ class ProxyControllerActor(port:Int) extends Actor with Timers with ActorLogging
 
   timers.startPeriodicTimer("heartbeat", Heartbeat, 5.seconds) //Heartbeat every 5 sec.
   timers.startPeriodicTimer("killer", RandomKill, 20.seconds)  //Killer will random to kill every 20 sec.
+  timers.startPeriodicTimer("news", News, 60.second) //killer will send a news every 60 sec.
 
   def receive: Receive = {
     case CreateClient(ctx) =>
@@ -56,6 +57,11 @@ class ProxyControllerActor(port:Int) extends Actor with Timers with ActorLogging
         } else { log.info("So lucky, No one get kill") }
       } else { log.info("Server is running ... ") }
 
+    case News =>
+      clients.foreach { clientRef =>
+        log.info(">> Announcing . . ")
+        clientRef ! News
+      }
     case Terminated(actorRef) =>
       log.info("Remove the disconnect client's actor")
       clients = clients - actorRef

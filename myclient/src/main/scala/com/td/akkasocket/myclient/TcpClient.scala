@@ -22,9 +22,8 @@ class TcpClient(port: Int) extends StrictLogging {
       bootstrap.channel(classOf[NioSocketChannel])
       bootstrap.option(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)
 
-      val delimiters: Array[ByteBuf] = Array[ByteBuf](
-        Unpooled.wrappedBuffer(Array[Byte]('|')),
-        Unpooled.wrappedBuffer(Array[Byte]('/'))) //Custom to separated the message instead of default \n
+      //Custom to separated the message instead of default \n
+      val delimiters: Array[ByteBuf] = Array[ByteBuf](Unpooled.wrappedBuffer(Array[Byte]('/')))
       bootstrap.handler(new ChannelInitializer[SocketChannel](){
         @throws[Exception]
         override def initChannel(channel: SocketChannel): Unit = {

@@ -22,8 +22,9 @@ class ProxyServer(port:Int) extends StrictLogging {
         .channel(classOf[NioServerSocketChannel])
         .localAddress(new InetSocketAddress(port))
         .childHandler(new ChannelInitializer[SocketChannel](){
-          override def initChannel(ch:SocketChannel):Unit={
-            ch.pipeline.addLast(new ProxyServerHandler(controllerRef))
+          override def initChannel(channel:SocketChannel):Unit={
+            channel.pipeline
+              .addLast(new ProxyServerHandler(controllerRef))
           }
         }).option(ChannelOption.SO_BACKLOG, 128: java.lang.Integer)
         .childOption(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)

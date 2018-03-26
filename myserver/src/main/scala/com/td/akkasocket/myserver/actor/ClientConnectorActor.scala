@@ -1,7 +1,7 @@
 package com.td.akkasocket.myserver.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.tradition.akkasocket.shared.Code.{Heartbeat, Kill}
+import com.tradition.akkasocket.shared.Code.{Heartbeat, Kill, News}
 import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelHandlerContext
 import io.netty.util.CharsetUtil
@@ -15,7 +15,7 @@ object ClientConnectorActor {
 class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorLogging {
   case class Data(value:String)
   object MyJsonProtocol extends DefaultJsonProtocol {
-    implicit val myFormat = jsonFormat1(Data)
+    implicit val myFormat: RootJsonFormat[Data] = jsonFormat1(Data)
   }
   import MyJsonProtocol._
 
@@ -27,12 +27,16 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
   def receive: Receive = {
     case Heartbeat => // send heartbeat to client
       val json = Data("Heartbeat").toJson
-      val data:Data = json.convertTo[Data]
-      ctx.writeAndFlush(Unpooled.copiedBuffer( json.prettyPrint + "|", CharsetUtil.UTF_8))
+      ctx.writeAndFlush(Unpooled.copiedBuffer( json.prettyPrint + "/", CharsetUtil.UTF_8))
 
     case int:Int =>
-      ctx.writeAndFlush(Unpooled.copiedBuffer( int + "|", CharsetUtil.UTF_8))
+      ctx.writeAndFlush(Unpooled.copiedBuffer( int + "/", CharsetUtil.UTF_8))
       log.info("[ClientConnectorActor] Now, we have => " + int + " people connected")
+
+    case News =>
+      val json = Data("news").toJson
+      ctx.writeAndFlush(Unpooled.copiedBuffer( json.prettyPrint + "/", CharsetUtil.UTF_8))
+      log.info("[ClientConnectorActor] News Announce")
 
     case Kill => // close client connection
       log.info("[ClientConnectorActor]: channel id : " + ctx.channel().id() + " is gone")
