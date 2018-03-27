@@ -25,10 +25,10 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
   def receive: Receive = {
     case Heartbeat => // send heartbeat to client
       val json = Data("Heartbeat").toJson
-      ctx.writeAndFlush(json.prettyPrint+ "")
+      ctx.writeAndFlush(json.prettyPrint)
 
     case int:Int =>
-      ctx.writeAndFlush(int + "")
+      ctx.writeAndFlush(int.toString)
       log.info("Now, we have " + int + " people connected")
 
     case News =>
