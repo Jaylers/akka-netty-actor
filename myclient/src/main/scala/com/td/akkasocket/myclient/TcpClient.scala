@@ -1,7 +1,5 @@
 package com.td.akkasocket.myclient
 
-import java.nio.charset.Charset
-
 import com.typesafe.scalalogging.StrictLogging
 import io.netty.bootstrap.Bootstrap
 import io.netty.buffer.{ByteBuf, Unpooled}
@@ -9,8 +7,8 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.channel.{ChannelInitializer, ChannelOption}
-import io.netty.handler.codec.{DelimiterBasedFrameDecoder, LengthFieldBasedFrameDecoder, LengthFieldPrepender}
 import io.netty.handler.codec.string.{StringDecoder, StringEncoder}
+import io.netty.handler.codec.{LengthFieldBasedFrameDecoder, LengthFieldPrepender}
 import io.netty.util.CharsetUtil
 
 class TcpClient(port: Int) extends StrictLogging {
