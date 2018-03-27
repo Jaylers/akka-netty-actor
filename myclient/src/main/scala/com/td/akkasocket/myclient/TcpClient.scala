@@ -2,7 +2,6 @@ package com.td.akkasocket.myclient
 
 import com.typesafe.scalalogging.StrictLogging
 import io.netty.bootstrap.Bootstrap
-import io.netty.buffer.{ByteBuf, Unpooled}
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
@@ -24,14 +23,12 @@ class TcpClient(port: Int) extends StrictLogging {
       bootstrap.channel(classOf[NioSocketChannel])
       bootstrap.option(ChannelOption.SO_KEEPALIVE, true: java.lang.Boolean)
 
-      //Custom to separated the message instead of default \n
-      val delimiters: Array[ByteBuf] = Array[ByteBuf](Unpooled.wrappedBuffer(Array[Byte]('/')))
       bootstrap.handler(new ChannelInitializer[SocketChannel](){
         @throws[Exception]
         override def initChannel(channel: SocketChannel): Unit = {
           channel.pipeline
+            //This will know the header of each message and can get it one by one of message
             .addFirst(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4))
-            //.addFirst("separate", new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
             .addLast("frameEncoder", new LengthFieldPrepender(4))
             .addLast("decoder", new StringDecoder(CharsetUtil.UTF_8))
             .addLast("encoder", new StringEncoder(CharsetUtil.UTF_8))

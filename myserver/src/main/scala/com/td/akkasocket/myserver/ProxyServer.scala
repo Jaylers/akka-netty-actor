@@ -27,9 +27,7 @@ class ProxyServer(port:Int) extends StrictLogging {
         .childHandler(new ChannelInitializer[SocketChannel](){
           override def initChannel(channel:SocketChannel):Unit={
             channel.pipeline
-              .addFirst(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 1, 1, 0))
               .addFirst(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4))
-              //.addFirst("separate", new DelimiterBasedFrameDecoder(4096, true, delimiters: _*))
               .addLast("frameEncoder", new LengthFieldPrepender(4))
               .addLast("decoder", new StringDecoder(CharsetUtil.UTF_8))
               .addLast("encoder", new StringEncoder(CharsetUtil.UTF_8))

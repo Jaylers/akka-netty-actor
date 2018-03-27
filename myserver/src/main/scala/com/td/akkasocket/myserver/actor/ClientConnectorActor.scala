@@ -25,23 +25,22 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
   def receive: Receive = {
     case Heartbeat => // send heartbeat to client
       val json = Data("Heartbeat").toJson
-//      ctx.writeAndFlush(Unpooled.copiedBuffer( json.prettyPrint + "/", CharsetUtil.UTF_8))
       ctx.writeAndFlush(json.prettyPrint+ "")
 
     case int:Int =>
-//      ctx.writeAndFlush(Unpooled.copiedBuffer( int + "/", CharsetUtil.UTF_8))
       ctx.writeAndFlush(int + "")
       log.info("Now, we have " + int + " people connected")
 
     case News =>
-      val json = Data("Author’s Note: For at least a decade and if not more, there has been a serial killer in Toronto," +
-        " preying upon South Asian and Middle Eastern men associated with the queer village. The tragedy has shaken " +
-        "community members to the core. We remember the risk of isolation. We remember the value of family. We remember " +
-        "the fragility of our tender bodies. We remember justice is elusive. And that love is even more so. Months later, " +
-        "we all find out Bruce McArthur has been charged with five counts of first degree murder and no bodies. Between the" +
-        " first and second drafts of this article, the number climbed to seven bodies and six charges. One man remains" +
-        " unidentified. Abdulbasir remains missing.").toJson
-//      ctx.writeAndFlush(Unpooled.copiedBuffer( json.prettyPrint + "/", CharsetUtil.UTF_8))
+      val json = Data("There are few things I regret more than my familiarity with the Trump family. Over the course of " +
+        "the past year or two, I have come to know each of them in their own horrible way, like relatives you dread seeing " +
+        "at Thanksgiving. I know about Melania’s taste in decor, evidenced by those Nightmare Before Christmas horror-trees" +
+        " in the White House hallway. I have skimmed Ivanka’s Instagram and come to know the millennial-pink taste of " +
+        "terror. And I know — as every single one of us must know by now — that Donald Trump Jr., the president’s largest" +
+        " and most adult of sons, is getting a divorce from his wife, Vanessa. \nAll of this raises an inevitable debate" +
+        " about how, as members of the media, we ought to cover the Trump family. And right now, we are being asked to be" +
+        " kind about Don’s marital woes — namely, the reports that the mother of his children is reportedly leaving him" +
+        " because she can’t stand his “combative public persona,” and also because he cheated on her with a contestant from").toJson
       ctx.writeAndFlush(json.prettyPrint+"")
       log.info("[ClientConnectorActor] News Announce")
 
