@@ -2,7 +2,9 @@ package com.td.akkasocket.myserver.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
 import com.tradition.akkasocket.shared.Code.{Heartbeat, Kill, News}
+import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelHandlerContext
+import io.netty.util.CharsetUtil
 import io.netty.util.concurrent.Future
 import spray.json._
 
@@ -25,12 +27,10 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
   def receive: Receive = {
     case Heartbeat => // send heartbeat to client
       val json = Data("Heartbeat").toJson
-//      ctx.writeAndFlush(Unpooled.copiedBuffer( json.prettyPrint + "/", CharsetUtil.UTF_8))
-      ctx.writeAndFlush(json.prettyPrint+ "")
+      ctx.writeAndFlush(Unpooled.copiedBuffer( json.prettyPrint + "/", CharsetUtil.UTF_8))
 
     case int:Int =>
-//      ctx.writeAndFlush(Unpooled.copiedBuffer( int + "/", CharsetUtil.UTF_8))
-      ctx.writeAndFlush(int + "")
+      ctx.writeAndFlush(Unpooled.copiedBuffer( int + "/", CharsetUtil.UTF_8))
       log.info("Now, we have " + int + " people connected")
 
     case News =>
@@ -41,8 +41,7 @@ class ClientConnectorActor(ctx: ChannelHandlerContext) extends Actor with ActorL
         "we all find out Bruce McArthur has been charged with five counts of first degree murder and no bodies. Between the" +
         " first and second drafts of this article, the number climbed to seven bodies and six charges. One man remains" +
         " unidentified. Abdulbasir remains missing.").toJson
-//      ctx.writeAndFlush(Unpooled.copiedBuffer( json.prettyPrint + "/", CharsetUtil.UTF_8))
-      ctx.writeAndFlush(json.prettyPrint+"")
+      ctx.writeAndFlush(Unpooled.copiedBuffer( json.prettyPrint + "/", CharsetUtil.UTF_8))
       log.info("[ClientConnectorActor] News Announce")
 
     case Kill => // close client connection
